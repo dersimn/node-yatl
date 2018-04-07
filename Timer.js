@@ -2,6 +2,9 @@ class Timer {
     constructor(fn, t, a = true) {
         this.fn = fn;
         this.t = t;
+        this.timerObj = null;
+        this.timeoutObj = null;
+        
         if (a) {
             this.timerObj = setInterval(fn, t);
         }
@@ -11,6 +14,10 @@ class Timer {
         if (this.timerObj) {
             clearInterval(this.timerObj);
             this.timerObj = null;
+        }
+        if (this.timeoutObj) {
+            clearTimeout(this.timeoutObj);
+            this.timeoutObj = null;
         }
         return this;
     }
@@ -32,8 +39,12 @@ class Timer {
         return this.stop().start();
     }
 
-    exec() {
-        this.fn();
+    exec(to) {
+        if (to) {
+            this.timeoutObj = setTimeout(this.fn, to);
+        } else {
+            this.fn();
+        }
         return this;
     }
 }
