@@ -1,0 +1,19 @@
+{
+  "name": "yatl",
+  "version": "1.0.0",
+  "description": "Yet another Timer Library",
+  "main": "Timer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dersimn/node-yatl.git"
+  },
+  "author": "Simon Christmann <simon@christmann.email>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dersimn/node-yatl/issues"
+  },
+  "homepage": "https://github.com/dersimn/node-yatl#readme"
+}
