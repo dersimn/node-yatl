@@ -1,31 +1,39 @@
-function Timer(fn, t) {
-    var timerObj = setInterval(fn, t);
+class Timer {
+    constructor(fn, t, a = true) {
+        this.fn = fn;
+        this.t = t;
+        if (a) {
+            this.timerObj = setInterval(fn, t);
+        }
+    }
 
-    this.stop = function() {
-        if (timerObj) {
-            clearInterval(timerObj);
-            timerObj = null;
+    stop() {
+        if (this.timerObj) {
+            clearInterval(this.timerObj);
+            this.timerObj = null;
         }
         return this;
     }
 
     // start timer using current settings (if it's not already running)
-    this.start = function() {
-        if (!timerObj) {
+    start() {
+        if (!this.timerObj) {
             this.stop();
-            timerObj = setInterval(fn, t);
+            this.timerObj = setInterval(this.fn, this.t);
         }
         return this;
     }
 
     // start with new interval, stop current interval
-    this.reset = function(newT) {
-        t = newT;
+    reset(newT) {
+        if (newT) {
+            this.t = newT;
+        }
         return this.stop().start();
     }
 
-    this.exec = function() {
-        fn();
+    exec() {
+        this.fn();
         return this;
     }
 }
