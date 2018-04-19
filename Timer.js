@@ -41,6 +41,10 @@ class Timer {
 
     exec(to) {
         if (to) {
+            if (this.timeoutObj) {
+                clearTimeout(this.timeoutObj);
+                this.timeoutObj = null;
+            }
             this.timeoutObj = setTimeout(this.fn, to);
         } else {
             this.fn();
