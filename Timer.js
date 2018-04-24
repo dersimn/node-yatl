@@ -11,6 +11,8 @@ class Timer {
         }
         this.timerObj = setInterval(this.fn, t);
 
+        this.t = t;
+
         return this;
     }
     stop() {
@@ -22,6 +24,9 @@ class Timer {
             clearTimeout(this.timeouts.pop());
         }
         return this;
+    }
+    reset() {
+        return this.start(this.t);
     }
 
     exec() {
