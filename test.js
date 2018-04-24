@@ -1,16 +1,15 @@
 const Timer = require('./Timer.js');
 
-console.log('Testing YaTL');
-
 var timer1 = new Timer(()=>{
-	console.log("Timer1 - every 2 Seconds");
-},2000).start();
+	console.log("Timer1 - every 10 Seconds");
+	timeout.timeout(1000);
+}).start(10000);
 
 var timer2 = new Timer(()=>{
-	console.log("Tiemr2 - every 3 Seconds");
-},3000).start();
+	console.log("Tiemr2 - every 30 Seconds");
+}).start(30000);
 
-var timer3 = new Timer(()=>{
-	console.log("Timer3 - reset timer1 every 5sec");
-	timer1.reset(1000);
-},5000).start();
+var timeout = new Timer(()=>{
+	console.log("Timeout triggered");
+	timeout.stop();
+}).timeout(1000).timeout(5000);

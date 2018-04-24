@@ -1,54 +1,36 @@
 class Timer {
-    constructor(fn, t, a = true) {
+    constructor(fn) {
         this.fn = fn;
-        this.t = t;
-        this.timerObj = null;
-        this.timeoutObj = null;
-        
-        if (a) {
-            this.timerObj = setInterval(fn, t);
-        }
+        this.timer = null;
+        this.timeouts = [];
     }
 
-    stop() {
-        if (this.timerObj) {
-            clearInterval(this.timerObj);
-            this.timerObj = null;
-        }
-        if (this.timeoutObj) {
-            clearTimeout(this.timeoutObj);
-            this.timeoutObj = null;
-        }
-        return this;
-    }
-
-    // start timer using current settings (if it's not already running)
-    start() {
-        if (!this.timerObj) {
+    start(t) {
+        if (this.timer) {
             this.stop();
-            this.timerObj = setInterval(this.fn, this.t);
+        }
+        this.timerObj = setInterval(this.fn, t);
+
+        return this;
+    }
+    stop() {
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
+        while (this.timeouts.length) {
+            clearTimeout(this.timeouts.pop());
         }
         return this;
     }
 
-    // start with new interval, stop current interval
-    reset(newT) {
-        if (newT) {
-            this.t = newT;
-        }
-        return this.stop().start();
+    exec() {
+        this.fn();
+        return this;
     }
 
-    exec(to) {
-        if (to) {
-            if (this.timeoutObj) {
-                clearTimeout(this.timeoutObj);
-                this.timeoutObj = null;
-            }
-            this.timeoutObj = setTimeout(this.fn, to);
-        } else {
-            this.fn();
-        }
+    timeout(to) {
+        this.timeouts.push(setTimeout(this.fn, to)); //Todo: clarify if this results in a memory leak
         return this;
     }
 }
