@@ -72,12 +72,12 @@ class YatlTimeoutTicker {
     constructor(fn, fntk) {
         this.ticks = 0;
 
-        this.timerObj = YatlTimer(() => {
+        this.timerObj = new YatlTimer(() => {
             this.ticks++;
             fntk(this.ticks * this.timerObj.currentInterval, this.timeoutObj.currentTimeout);
         });
 
-        this.timoutObj = YatlTimeout(() => {
+        this.timeoutObj = new YatlTimeout(() => {
             this.timerObj.stop();
             fn();
         });
@@ -102,6 +102,8 @@ class YatlTimeoutTicker {
     }
 }
 
-module.exports = YatlTimer;
-module.exports = YatlTimeout;
-module.exports = YatlTimeoutTicker;
+module.exports = {
+    Timer         : YatlTimer,
+    Timeout       : YatlTimeout,
+    TimeoutTicker : YatlTimeoutTicker
+}

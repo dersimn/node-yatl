@@ -1,9 +1,9 @@
-const Timer = require('../Timer.js');
+const Yatl = require('../Timer.js');
 
-var timeout1 = new YatlTimeout(()=>{
+var timeout1 = new Yatl.Timeout(()=>{
     console.log("Timeout1 triggered");
-}).timeout(1000);
+}).start(1000);
 
-var timeout2 = new YatlTimeout(()=>{
+var timeout2 = new Yatl.Timeout(()=>{
     console.log("Timeout2 triggered");
-}).timeout(2000);
+}).start(2000);
