@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/dersimn/node-yatl/issues"
   },
-  "homepage": "https://github.com/dersimn/node-yatl#readme"
+  "homepage": "https://github.com/dersimn/node-yatl#readme",
+  "devDependencies": {
+    "yalm": "^4.1.0"
+  }
 }

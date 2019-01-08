@@ -43,6 +43,7 @@ class YatlTimeout {
     start(t) {
         if (!this.timerObj && arguments.length === 1) {
             this.t = t;
+            this.timerStarted = Date.now();
             this.timerObj = setTimeout(this.fn, this.t);
         }
         return this;
@@ -70,15 +71,13 @@ class YatlTimeout {
 
 class YatlTimeoutTicker {
     constructor(fn, fntk) {
-        this.ticks = 0;
-
         this.timerObj = new YatlTimer(() => {
-            this.ticks++;
-            fntk(this.ticks * this.timerObj.currentInterval, this.timeoutObj.currentTimeout);
+            fntk(this.timeoutObj.timerStarted, this.timeoutObj.currentTimeout);
         });
 
         this.timeoutObj = new YatlTimeout(() => {
             this.timerObj.stop();
+            this.timerObj.exec();
             fn();
         });
     }
