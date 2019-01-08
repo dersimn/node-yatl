@@ -1,27 +1,26 @@
-class Timer {
+class YatlTimer {
     constructor(fn) {
         this.fn = fn;
-        this.timer = null;
-        this.timeouts = [];
+        this.timerObj = null;
+        this.t = null;
     }
 
     start(t) {
-        this.t = t;
-        
-        this.stop();
-        this.timerObj = setInterval(this.fn, this.t);
-
-        return this;
-    }
-    restart() {
-        return this.start(this.t);
-    }
-    stop() {
-        if (this.timer) {
-            clearInterval(this.timer);
-            this.timer = null;
+        if (!this.timerObj && arguments.length === 1) {
+            this.t = t;
+            this.timerObj = setInterval(this.fn, this.t);
         }
         return this;
+    }
+    stop() {
+        if (this.timerObj) {
+            clearInterval(this.timerObj);
+            this.timerObj = null;
+        }
+        return this;
+    }
+    restart(t) {
+        return this.stop().start(t || this.t);
     }
 
     exec() {
@@ -29,19 +28,80 @@ class Timer {
         return this;
     }
 
-    timeout(to) {
-        this.timeouts.push(setTimeout(this.fn, to)); //Todo: clarify if this results in a memory leak
+    get currentInterval() {
+        return this.t;
+    }
+}
+
+class YatlTimeout {
+    constructor(fn) {
+        this.fn = fn;
+        this.timerObj = null;
+        this.t = null;
+    }
+
+    start(t) {
+        if (!this.timerObj && arguments.length === 1) {
+            this.t = t;
+            this.timerObj = setTimeout(this.fn, this.t);
+        }
+        return this;
+    }
+    stop() {
+        if (this.timerObj) {
+            clearTimeout(this.timerObj);
+            this.timerObj = null;
+        }
+        return this;
+    }
+    restart(t) {
+        return this.stop().start(t || this.t);
+    }
+
+    exec() {
+        this.fn();
         return this;
     }
 
-    reset() {
-        this.stop();
-        while (this.timeouts.length) {
-            clearTimeout(this.timeouts.pop());
-        }
+    get currentTimeout() {
+        return this.t;
+    }
+}
 
+class YatlTimeoutTicker {
+    constructor(fn, fntk) {
+        this.ticks = 0;
+
+        this.timerObj = YatlTimer(() => {
+            this.ticks++;
+            fntk(this.ticks * this.timerObj.currentInterval, this.timeoutObj.currentTimeout);
+        });
+
+        this.timoutObj = YatlTimeout(() => {
+            this.timerObj.stop();
+            fn();
+        });
+    }
+
+    start(to, tk) {
+        if (arguments.length === 2) {
+            this.timeoutObj.start(to);
+            this.timerObj.start(tk);
+        }
+        return this;
+    }
+    stop() {
+        this.timeoutObj.stop();
+        this.timerObj.stop();
+        return this;
+    }
+    restart(to, tk) {
+        this.timeoutObj.restart(to);
+        this.timerObj.restart(tk);
         return this;
     }
 }
 
-module.exports = Timer;
+module.exports = YatlTimer;
+module.exports = YatlTimeout;
+module.exports = YatlTimeoutTicker;
