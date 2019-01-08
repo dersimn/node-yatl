@@ -8,7 +8,10 @@ class YatlTimer {
     start(t) {
         if (!this.timerObj && arguments.length === 1) {
             this.t = t;
-            this.timerObj = setInterval(this.fn, this.t);
+            this.timerStarted = Date.now();
+            this.timerObj = setInterval(() => {
+                typeof this.fn === 'function' && this.fn(this.timerStarted, this.interval);
+            }, this.t);
         }
         return this;
     }
@@ -24,7 +27,7 @@ class YatlTimer {
     }
 
     exec() {
-        this.fn();
+        typeof this.fn === 'function' && this.fn();
         return this;
     }
 
@@ -49,7 +52,7 @@ class YatlTimeout {
             this.t = t;
             this.timerStarted = Date.now();
             this.timerObj = setTimeout(() => {
-                this.fn();
+                typeof this.fn === 'function' && this.fn(this.timerStarted, this.timeout);
                 this.running = false;
             }, this.t);
             this.running = true;
@@ -69,7 +72,7 @@ class YatlTimeout {
     }
 
     exec() {
-        this.fn();
+        typeof this.fn === 'function' && this.fn();
         return this;
     }
 
@@ -84,7 +87,7 @@ class YatlTimeout {
 class YatlTimeoutTicker {
     constructor(fntk, fn) {
         this.timerObj = new YatlTimer(() => {
-            fntk(
+            typeof this.fntk === 'function' && fntk(
                 this.timerObj.isRunning,
                 this.timeoutObj.timerStarted,
                 this.timeoutObj.timeout,
