@@ -70,7 +70,7 @@ class YatlTimeout {
 }
 
 class YatlTimeoutTicker {
-    constructor(fn, fntk) {
+    constructor(fntk, fn) {
         this.timerObj = new YatlTimer(() => {
             fntk(this.timeoutObj.timerStarted, this.timeoutObj.currentTimeout);
         });
@@ -78,7 +78,7 @@ class YatlTimeoutTicker {
         this.timeoutObj = new YatlTimeout(() => {
             this.timerObj.stop();
             this.timerObj.exec();
-            fn();
+            typeof fn === 'function' && fn();
         });
     }
 

@@ -1,7 +1,8 @@
 const Yatl = require('../Timer.js');
 
-var timeoutticker = new Yatl.TimeoutTicker(() => {
-    console.log('Timeout reached');
-}, (timerStarted, duration) => {
+var timeoutticker = new Yatl.TimeoutTicker((timerStarted, duration) => {
     console.log('Tick', Date.now() - timerStarted, 'of', duration);
-}).start(10000, 1000);
+}/*, () => {
+    // Funtion on finish is optional
+    console.log('Timeout reached');
+}*/).start(10000, 1000);
