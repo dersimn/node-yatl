@@ -28,8 +28,11 @@ class YatlTimer {
         return this;
     }
 
-    get currentInterval() {
+    get interval() {
         return this.t;
+    }
+    get isRunning() {
+        return Boolean(this.timerObj);
     }
 }
 
@@ -38,13 +41,18 @@ class YatlTimeout {
         this.fn = fn;
         this.timerObj = null;
         this.t = null;
+        this.running = false;
     }
 
     start(t) {
         if (!this.timerObj && arguments.length === 1) {
             this.t = t;
             this.timerStarted = Date.now();
-            this.timerObj = setTimeout(this.fn, this.t);
+            this.timerObj = setTimeout(() => {
+                this.fn();
+                this.running = false;
+            }, this.t);
+            this.running = true;
         }
         return this;
     }
@@ -52,6 +60,7 @@ class YatlTimeout {
         if (this.timerObj) {
             clearTimeout(this.timerObj);
             this.timerObj = null;
+            this.running = false;
         }
         return this;
     }
@@ -64,15 +73,18 @@ class YatlTimeout {
         return this;
     }
 
-    get currentTimeout() {
+    get timeout() {
         return this.t;
+    }
+    get isRunning() {
+        return this.running;
     }
 }
 
 class YatlTimeoutTicker {
     constructor(fntk, fn) {
         this.timerObj = new YatlTimer(() => {
-            fntk(this.timeoutObj.timerStarted, this.timeoutObj.currentTimeout);
+            fntk(!this.timerObj.isRunning, this.timeoutObj.timerStarted, this.timeoutObj.timeout, this.timerObj.interval);
         });
 
         this.timeoutObj = new YatlTimeout(() => {
