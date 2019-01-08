@@ -84,7 +84,12 @@ class YatlTimeout {
 class YatlTimeoutTicker {
     constructor(fntk, fn) {
         this.timerObj = new YatlTimer(() => {
-            fntk(!this.timerObj.isRunning, this.timeoutObj.timerStarted, this.timeoutObj.timeout, this.timerObj.interval);
+            fntk(
+                this.timerObj.isRunning,
+                this.timeoutObj.timerStarted,
+                this.timeoutObj.timeout,
+                this.timerObj.interval
+            );
         });
 
         this.timeoutObj = new YatlTimeout(() => {
