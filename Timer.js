@@ -1,12 +1,12 @@
 class YatlTimer {
-    constructor(fn) {
+    constructor(fn, t) {
         this.fn = fn;
         this.timerObj = null;
-        this.t = null;
+        this.t = t || null;
     }
 
     start(t) {
-        if (!this.timerObj && arguments.length === 1) {
+        if (!this.timerObj && (arguments.length === 1 || this.t)) {
             this.t = t;
             this.timerStarted = Date.now();
             this.timerObj = setInterval(() => {
@@ -40,20 +40,20 @@ class YatlTimer {
 }
 
 class YatlTimeout {
-    constructor(fn) {
+    constructor(fn, t) {
         this.fn = fn;
         this.timerObj = null;
-        this.t = null;
+        this.t = t || null;
         this.running = false;
     }
 
     start(t) {
-        if (!this.timerObj && arguments.length === 1) {
+        if (!this.timerObj && (arguments.length === 1 || this.t)) {
             this.t = t;
             this.timerStarted = Date.now();
             this.timerObj = setTimeout(() => {
                 typeof this.fn === 'function' && this.fn(this.timerStarted, this.timeout);
-                this.running = false;
+                this.stop();
             }, this.t);
             this.running = true;
         }
@@ -85,25 +85,35 @@ class YatlTimeout {
 }
 
 class YatlTimeoutTicker {
-    constructor(fntk, fn) {
-        this.timerObj = new YatlTimer(() => {
-            typeof fntk === 'function' && fntk(
-                this.timerObj.isRunning,
-                this.timeoutObj.timerStarted,
-                this.timeoutObj.timeout,
-                this.timerObj.interval
-            );
-        });
+    constructor(fntk, fn, tk, t) {
+        this.timerObj = new YatlTimer(
+            () => {
+                typeof fntk === 'function' && fntk(
+                    this.timerObj.isRunning,
+                    this.timeoutObj.timerStarted,
+                    this.timeoutObj.timeout,
+                    this.timerObj.interval
+                );
+            },
+            tk
+        );
 
-        this.timeoutObj = new YatlTimeout(() => {
-            this.timerObj.stop();
-            this.timerObj.exec();
-            typeof fn === 'function' && fn();
-        });
+        this.timeoutObj = new YatlTimeout(
+            () => {
+                this.timerObj.stop();
+                this.timerObj.exec();
+                typeof fn === 'function' && fn();
+            },
+            t
+        );
     }
 
     start(to, tk) {
-        if (arguments.length === 2) {
+        if (
+                (arguments.length === 2 || (this.timerObj.interval && this.timeoutObj.timeout))
+            &&  (!this.timerObj.isRunning && !this.timeoutObj.isRunning)
+           )
+        {
             this.timeoutObj.start(to);
             this.timerObj.start(tk);
         }
@@ -115,9 +125,7 @@ class YatlTimeoutTicker {
         return this;
     }
     restart(to, tk) {
-        this.timeoutObj.restart(to);
-        this.timerObj.restart(tk);
-        return this;
+        return this.stop().start(to, tk);
     }
 }
 
